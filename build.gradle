@@ -32,7 +32,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-resource-server
 	implementation group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server', version: '6.1.2'
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
-	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 

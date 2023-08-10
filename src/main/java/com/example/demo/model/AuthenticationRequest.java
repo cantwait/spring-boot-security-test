@@ -3,7 +3,7 @@ package com.example.demo.model;
 import lombok.Data;
 
 @Data
-public class UserCreds {
+public class AuthenticationRequest {
     private String username;
     private String password;
 }

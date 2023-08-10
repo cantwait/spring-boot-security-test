@@ -1,30 +1,24 @@
 package com.example.demo.config;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.demo.repository.UserRepo;
-import com.example.demo.util.JwtTokenFilter;
+import com.example.demo.filter.JwtTokenFilter;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // @Value("${jwt.public.key}")
@@ -34,7 +28,6 @@ public class SecurityConfig {
     // private RSAPrivateKey rsaPrivateKey;
 
     private final JwtTokenFilter jwtTokenFilter;
-    private final UserRepo userRepo;
     private final AuthenticationProvider authenticationProvider;
 
 
@@ -42,14 +35,18 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
+                .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                    .requestMatchers(HttpMethod.POST, "/login")
+                    .permitAll()
+                )
                 .authorizeHttpRequests(
-                        authorizeHttpRequests -> authorizeHttpRequests
-                                .requestMatchers("/api/hello-admin").hasAnyRole("USER,ADMIN")
-                                .requestMatchers("/api/hello-user").hasAnyRole("USER")
-                                // ALLOW THE REST
-                                .anyRequest().permitAll())
+                    authorizeHttpRequests -> authorizeHttpRequests                    
+                    .requestMatchers(HttpMethod.GET, "/api/hello-admin").hasAnyRole("USER,ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/api/hello-user").hasAnyRole("USER")
+                    .anyRequest()
+                    .authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

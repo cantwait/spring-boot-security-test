@@ -1,4 +1,4 @@
-package com.example.demo.util;
+package com.example.demo.filter;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -11,8 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.demo.filter.JwtTokenUtil;
-import com.example.demo.repository.UserRepo;
+import com.example.demo.util.JwtTokenUtil;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,6 +30,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         final var header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        
+        if (request.getServletPath().contains("/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         if (header.isEmpty() || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -47,7 +52,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         // get user identity and set it on the spring security context
-        var userDetails = userDetailsService.loadUserByUsername(token);
+        var userDetails = userDetailsService.loadUserByUsername(username);
 
         if (Objects.isNull(userDetails) || !jtwTokenUtil.validate(token, userDetails)) {
             filterChain.doFilter(request, response);
