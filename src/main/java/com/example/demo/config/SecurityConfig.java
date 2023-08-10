@@ -29,6 +29,7 @@ public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
 
     @Bean
@@ -40,15 +41,16 @@ public class SecurityConfig {
                     .permitAll()
                 )
                 .authorizeHttpRequests(
-                    authorizeHttpRequests -> authorizeHttpRequests                    
-                    .requestMatchers(HttpMethod.GET, "/api/hello-admin").hasAnyRole("USER,ADMIN")
-                    .requestMatchers(HttpMethod.GET, "/api/hello-user").hasAnyRole("USER")
+                    authorizeHttpRequests -> authorizeHttpRequests
+                    .requestMatchers(HttpMethod.GET, "/api/hello-admin").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/api/hello-user").hasAnyAuthority("USER", "ADMIN")
                     .anyRequest()
                     .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler))
                 .build();
     }
 

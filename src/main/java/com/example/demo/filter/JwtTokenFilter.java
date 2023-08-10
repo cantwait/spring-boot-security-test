@@ -30,12 +30,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         final var header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        
+
         if (request.getServletPath().contains("/login")) {
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         if (header.isEmpty() || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
