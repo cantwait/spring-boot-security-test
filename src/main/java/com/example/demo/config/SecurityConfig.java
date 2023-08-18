@@ -44,7 +44,7 @@ public class SecurityConfig {
                     authorizeHttpRequests -> authorizeHttpRequests
                     .requestMatchers(HttpMethod.GET, "/api/hello-admin").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/hello-user").hasAnyAuthority("USER", "ADMIN")
-                    .anyRequest()
+                    .requestMatchers(HttpMethod.GET, "/api/**")
                     .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

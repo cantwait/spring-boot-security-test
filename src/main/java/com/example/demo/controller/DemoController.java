@@ -38,6 +38,13 @@ public class DemoController {
         return ResponseEntity.ok("Hello Admin");
     }
 
+    @GetMapping("/api/another")
+    public ResponseEntity<String> another() {
+        var principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("Another: " + principal.getUsername());
+        return ResponseEntity.ok("Another");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Validated AuthenticationRequest user) {
         log.info("Login: " + user.getUsername());

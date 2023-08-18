@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.demo.util.JwtTokenUtil;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (header.isEmpty() || !header.startsWith("Bearer ")) {
+        if (StringUtils.isBlank(header) || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }

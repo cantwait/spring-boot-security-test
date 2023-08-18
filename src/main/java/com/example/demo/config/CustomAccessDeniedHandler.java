@@ -20,6 +20,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
         log.info("User with IP address" + request.getRemoteAddr() + " attempted to access the protected URL: "
                 + request.getRequestURI() + " on date " + new java.util.Date());
+        response.setStatus(403);
     }
 
 }
